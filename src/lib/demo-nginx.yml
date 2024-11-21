@@ -1,0 +1,11 @@
+kind: lib
+chart:
+  app:
+    - volume-tz-msk
+namespace:
+  demo:
+    chart:
+      app:
+        nginx:
+          deps:
+            - _api # http://localhost/api/nginx/

@@ -1,0 +1,13 @@
+{{- range $name, $_ := .Values.pvc }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}
+{{- with $_.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+{{ toYaml $_.spec | indent 2 }}
+{{- end }}

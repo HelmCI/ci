@@ -1,0 +1,12 @@
+{{- range $path, $_ := .Values.yaml }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+data:
+{{- range $name, $file := $_ }}
+  {{ $name }}: | 
+{{ $file | toYaml | indent 4 }}
+{{ end }}
+{{ end }}

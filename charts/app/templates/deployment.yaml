@@ -1,0 +1,238 @@
+apiVersion: apps/v1
+kind: {{ default "Deployment" .Values.kind }}
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.commonAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+    {{- with .Values.strategy }}
+  strategy:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- range $path, $files := .Values.yaml }}
+          {{- range $name, $_ := $files }}
+        yaml/{{ $name }}: {{ $_ | toYaml | sha256sum }}
+          {{- end }}
+        {{- end }}
+      labels:
+        {{- include "app.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 0 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.hostNetwork }}
+      hostNetwork: true
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if not .Values.serviceDisable }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          {{- end }}
+          {{- if not .Values.probeDisable }}
+          livenessProbe:
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- else }}
+            httpGet:
+              path: /
+              port: http
+            {{- end }}
+          readinessProbe:
+            {{- if .Values.readinessProbe }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- else }}
+            httpGet:
+              path: /
+              port: http
+            {{- end }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            {{- range $name, $value := .Values.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $name, $value := .Values.envJson }}
+            - name: {{ $name }}
+              value: {{ $value | toJson | quote }}
+            {{- end }}
+            {{- range $store, $stores := .Values.envFrom }}
+              {{- range $ref, $envs := $stores }}
+                {{- range $name, $key := $envs }}
+            - name: {{ $name }}
+              valueFrom:
+                {{ $store -}}KeyRef:
+                  name: {{ $ref }}
+                  key: {{ $key | quote }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- with .Values.workingDir }}
+          workingDir: {{ . }}
+          {{- end }}
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.args }}
+          args:
+            {{- range . }}
+            - {{ . | quote }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            {{- with .Values.volumeMounts }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- range $name, $volume := .Values.volumeMount }}
+            - name: {{ $name }}
+              {{- toYaml $volume | nindent 14 }}
+            {{- end }}
+            {{- range $path, $files := .Values.files }}
+            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+              mountPath: {{ $path }}
+              readOnly: true
+            {{ end }}
+            {{- range $path, $files := .Values.file }}
+            {{- range $name, $_ := $files }}
+            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+              mountPath: {{ $path }}/{{ $name }}
+              subPath: {{ $name }}
+              readOnly: true
+            {{ end }}
+            {{ end }}
+            {{- range $path, $files := .Values.yaml }}
+            {{- range $name, $_ := $files }}
+            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+              mountPath: {{ $path }}/{{ $name }}
+              subPath: {{ $name }}
+              readOnly: true
+            {{ end }}
+            {{ end }}
+            {{- range $path, $files := .Values.binaryData }}
+            {{- range $name, $_ := $files }}
+            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+              mountPath: {{ $path }}/{{ $name }}
+              subPath: {{ $name }}
+              readOnly: true
+            {{ end }}
+            {{ end }}
+            {{- range $key, $val := .Values.hostPathName }}
+            - name: {{ $key }}
+              mountPath: {{ $val.to }}
+            {{ end }}
+            {{- range $from, $to := .Values.hostPath }}
+            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $to "-" }}
+              mountPath: {{ $to }}
+            {{ end }}
+      volumes:
+        {{- range $name, $volume := .Values.volume }}
+        - name: {{ $name }}
+          {{- toYaml $volume | nindent 10 }}
+        {{- end }}
+        {{- with .Values.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- range $path, $files := .Values.files }}
+        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+          configMap:
+            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            items:
+              {{- range $name, $_ := $files }}
+              - key: {{ $name }}
+                path: {{ $name }}
+              {{ end }}
+        {{ end }}
+        {{- range $path, $files := .Values.file }}
+        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+          configMap:
+            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            items:
+              {{- range $name, $_ := $files }}
+              - key: {{ $name }}
+                path: {{ $name }}
+                # mode: 0777
+              {{ end }}
+        {{ end }}
+        {{- range $path, $files := .Values.yaml }}
+        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+          configMap:
+            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            items:
+              {{- range $name, $_ := $files }}
+              - key: {{ $name }}
+                path: {{ $name }}
+                # mode: 0777
+              {{ end }}
+        {{ end }}
+        {{- range $path, $files := .Values.binaryData }}
+        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+          configMap:
+            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            items:
+              {{- range $name, $_ := $files }}
+              - key: {{ $name }}
+                path: {{ $name }}
+              {{ end }}
+        {{ end }}
+        {{- range $key, $val := .Values.hostPathName }}
+        - name: {{ $key }}
+          hostPath:
+            path:  {{ $val.from }}
+        {{ end }}
+        {{- range $from, $to := .Values.hostPath }}
+        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $to "-" }}
+          hostPath:
+            path:  {{ $from }}
+        {{ end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

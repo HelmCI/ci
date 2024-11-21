@@ -1,0 +1,4 @@
+kind: context
+deps:
+  - demo-store
+  - demo-nginx

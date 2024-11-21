@@ -1,0 +1,5 @@
+{{- if .Values.Deployment -}}
+apiVersion: apps/v1
+kind: Deployment
+{{ toYaml .Values.Deployment }}
+{{- end }}

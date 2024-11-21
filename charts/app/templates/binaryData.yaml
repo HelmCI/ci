@@ -1,0 +1,11 @@
+{{- range $path, $_ := .Values.binaryData }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+binaryData:
+{{- range $name, $file := $_ }}
+  {{ $name }}: {{ $file | indent 4 }}
+{{ end }}
+{{ end }}

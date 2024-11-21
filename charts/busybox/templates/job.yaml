@@ -1,0 +1,5 @@
+{{- if .Values.Job -}}
+apiVersion: batch/v1
+kind: Job
+{{ toYaml .Values.Job }}
+{{- end }}

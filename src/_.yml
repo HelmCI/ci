@@ -1,0 +1,4 @@
+kind: all
+store:
+  registry:
+    host: docker.io

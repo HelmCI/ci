@@ -1,0 +1,5 @@
+{{- if .Values.CronJob -}}
+apiVersion: batch/v1
+kind: CronJob
+{{ toYaml .Values.CronJob }}
+{{- end }}

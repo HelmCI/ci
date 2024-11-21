@@ -1,0 +1,5 @@
+ingress-nginx:
+  chart: ingress-nginx/ingress-nginx
+  tags:
+    - ingress-nginx
+  v: v1.11.3

@@ -1,0 +1,97 @@
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.1
+version: 0.41.1
+# $K = k3d-local-ci - Kubernetes context
+# $R =  - Release suffix
+# $V =  - Version
+# $T =  - Tag (Release/Version)
+
+## YAML Anchors for reuse:
+.z:
+  - &demo # example yaml sugar
+    namespace: demo
+  - &default
+    context: k3d-local-ci
+    create_namespace: true
+    pending_release_strategy: uninstall # rollback
+    timeout: 30m # 5m
+    wait: true
+    offline_kube_version: 1.30.4
+
+## Rich pattern "current cluster by tags":
+# MODULES SRC:   []
+# MODULES CHART: []
+# Merge context in order:
+# COMMON  STORE:  file://./src/_.yml <- exists
+# COMMON  SECRET: file://./.env.yml <- NOT exists
+# CONTEXT SECRET: file://./.env-k3d-local-ci.yml <- NOT exists
+# DEPS:           file://./src/lib/demo-store.yml
+# DEPS:           file://./src/lib/demo-nginx.yml
+# CONTEXT:        file://./src/k3d-local-ci.yml <- k3d-local-ci
+# NS: [demo]
+# INGRESS: http://localhost
+.store: &store
+  _: src/_
+  _modules: []
+  db_map: null
+  ingress:
+      allHosts: true
+      host: ""
+      host0: localhost
+      sheme: http
+      url: http://localhost
+  kube: k3d-local-ci
+  oidc:
+      route: auth
+      srv: oidc.infra:8080
+      url: http://localhost/auth
+  registry:
+      host: docker.io
+      hostProxy: docker.io
+
+releases:
+#  NS: demo
+#   CHART: app
+  - <<: *default # RELEASE: "nginx"
+    namespace: demo
+    name: nginx
+    chart: 
+      name: charts/app
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo, nginx, demo@nginx]
+    values: 
+      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl 
+      - src/lib/app/_api.tpl # file://./src/lib/app/_api.tpl
+      # file://./src/ns/demo/app/_api.tpl
+      # file://./src/context/k3d-local-ci/demo/app/_api.tpl
+      # file://./src/lib/app/nginx.tpl
+      # file://./src/ns/demo/app/nginx.tpl
+      # file://./src/context/k3d-local-ci/demo/app/nginx.tpl
+    store:
+      <<: *store
+      __: src/_
+      name: nginx
+
+
+## Simple pattern "multycluster by tags":
+  # NS: infra
+  - <<: *default
+    namespace: infra
+    name: ingress-nginx
+    chart: ingress-nginx/ingress-nginx
+    values: [src/simple/infra/ingress-nginx.tpl]
+    store: {v: v1.11.3}
+    tags: [infra, infra@ingress-nginx, ingress-nginx]
+      
+
+## Example raw releases:
+
+  - <<: [*default, *demo] # example yaml sugar (namespace as tag without new row)
+    name: nginx-raw
+    chart: charts/app
+    values: [src/raw/nginx.tpl] # example yaml sugar for simple list without new row
+    store: { v: latest } # example set version with support git-lab ci
+    tags: [nginx-raw, demo]
+
+repositories:
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx

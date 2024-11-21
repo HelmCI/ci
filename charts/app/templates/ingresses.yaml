@@ -1,0 +1,46 @@
+{{- $fullName := include "app.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+
+{{- range $name, $_ := .Values.ingresses }}
+{{- if $_ }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}{{ $name | replace "_" "" }}
+  labels:
+    {{- include "app.labels" $ | nindent 4 }}
+  annotations:
+    {{- include "app.annotations" $ | nindent 4 }}
+    {{- with $_.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- range $k, $v := $_.nginx }}
+    nginx.ingress.kubernetes.io/{{ $k }}: {{ $v | quote }}
+    {{- end }}
+spec:
+  {{/* {{- if and $_.nginx }} */}}
+  ingressClassName: {{ default "nginx" $_.class }}
+  {{/* {{- end }} */}}
+  rules:
+    {{- range $_host, $host := $_.hosts }}
+    - host: {{ or $host.host $_host | quote }}
+      http:
+        paths:
+          {{- range $host.paths }}
+          - path: {{ .path }}
+            pathType: {{ default "Prefix" .pathType }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+              {{- else }}
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+              {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}

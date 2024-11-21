@@ -1,0 +1,10 @@
+.env.ini
+.env.yml
+.env-*
+.ci-env
+
+.helmwave
+helmwave*.yml
+
+*.tgz
+tmp

@@ -1,0 +1,9 @@
+kind: lib
+store:
+  ingress:
+    host: localhost
+    sheme: http
+    allHosts: true
+  oidc:
+    srv: oidc.infra:8080
+    route: auth
