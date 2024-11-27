@@ -1,7 +1,7 @@
 helmwave_plan = tmp/.$K
 helmwave_plan_new = $(helmwave_plan)-new
 
-helmwave_fatal = helmwave --log-level=fatal
+helmwave_fatal = helmwave --log-level=warning # fatal
 helmwave_yml_args = --templater=gomplate -f helmwave-$K.yml
 helmwave_yml_cmd = helmwave --log-timestamps yml $(helmwave_yml_args)
 helmwave_build_args = --yml -p $(helmwave_plan)
@@ -13,7 +13,7 @@ helmwave_yml:
 helmwave_dump:
 	$(helmwave_build_fatal) $(helmwave_build_args)
 helmwave_dump_changed:
-	$(helmwave_build_fatal) $(helmwave_build_args) 2>&1 | grep --color=auto 'has changed:' ||:
+	$(helmwave_build_fatal) $(helmwave_build_args) 2>&1 | grep --color=auto -E 'has changed:|FATAL|WARNING' ||:
 helmwave_dump_offline:
 	$(helmwave_build_offline) $(helmwave_build_args)
 helmwave_list:
