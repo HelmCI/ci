@@ -1,4 +1,4 @@
-# Helmwave-CI
+# HelmwaveCI
 
 Read this in other languages: [English](README.md), [Русский](README.ru.md)
 
@@ -84,12 +84,12 @@ helmwave.yml.tpl # entry point with engine import
 # k3d example
 
 ```sh
-k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 14.4s
-helmwave up # 1.3m
+k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 13.4s
+helmwave up # 48.5s
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
 
-k3d cluster delete local-ci # 725ms
+k3d cluster delete local-ci # 709ms
 ```
 
 ## TODO:
