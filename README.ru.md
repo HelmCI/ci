@@ -1,4 +1,4 @@
-# Helmwave-CI
+# HelmwaveCI
 
 На других языках: [English](README.md), [Русский](README.ru.md)
 

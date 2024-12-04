@@ -5,9 +5,9 @@ watch_prefix =
 
 watch_diff:
 	$(watchexec) --timings -- ' date ;\
-		$(helmwave_build_fatal) --diff-mode=none --yml=$(watch_auto_yml) \
+		$(helmwave_build) --diff-mode=none --yml=$(watch_auto_yml) \
 			-p $(helmwave_plan_new) ;\
-		$(helmwave_fatal) diff plan \
+		$(helmwave_no_log) diff plan \
 			--plandir2="$(watch_prefix)$(helmwave_plan)" \
 			--plandir1="$(helmwave_plan_new)" '
 
@@ -19,7 +19,7 @@ watch_diff_parent: watch_diff
 
 watch_build:
 	$(watchexec) --timings -- ' date ;\
-		$(helmwave_build_fatal) --skip-unchanged --yml '
+		$(helmwave_build) --skip-unchanged --yml '
 watch_yml:
 	$(watchexec) --timings -- '$(helmwave_yml_cmd)'
 watch_debug:

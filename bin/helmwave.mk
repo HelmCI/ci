@@ -23,3 +23,5 @@ helmwave_diff:
 	$(helmwave_no_log) diff live --plandir=$(helmwave_plan_new) 
 helmwave_graph:
 	helmwave graph --dependencies $(helmwave_build_args)
+
+helmwave_test: helmwave_yml helmwave_dump helmwave_dump_context helmwave_dump_changed helmwave_dump_offline helmwave_graph helmwave_list
