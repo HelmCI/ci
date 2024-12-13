@@ -1,3 +1,5 @@
+helmwave_pwd := $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+
 helmwave_plan = tmp/.$K
 helmwave_plan_new = $(helmwave_plan)-new
 
@@ -23,5 +25,8 @@ helmwave_diff:
 	$(helmwave_no_log) diff live --plandir=$(helmwave_plan_new) 
 helmwave_graph:
 	helmwave graph --dependencies $(helmwave_build_args)
+
+helmwave_completion_fish: # https://github.com/helmwave/helmwave/issues/1048
+	cp $(helmwave_pwd)/helmwave.fish ~/.config/fish/functions/helmwave.fish
 
 helmwave_test: helmwave_yml helmwave_dump helmwave_dump_context helmwave_dump_changed helmwave_dump_offline helmwave_graph helmwave_list
