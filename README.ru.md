@@ -83,8 +83,8 @@ helmwave.yml.tpl # точка входа с импортом движка
 # Пример k3d
 
 ```sh
-k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 14.4s
-helmwave up # 1.3m
+k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 13.1s
+helmwave up # 58.5s
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
 

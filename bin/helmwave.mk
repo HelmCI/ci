@@ -8,7 +8,6 @@ helmwave_yml_args = --templater=gomplate -f helmwave-$K.yml
 helmwave_yml_cmd = helmwave --log-timestamps yml $(helmwave_yml_args)
 helmwave_build_args = --yml -p $(helmwave_plan)
 helmwave_build = $(helmwave_no_log) build $(helmwave_build_args) $(helmwave_yml_args)
-helmwave_graph_cmd = 
 helmwave_yml:
 	$(helmwave_yml_cmd)
 helmwave_dump:
@@ -20,7 +19,7 @@ helmwave_dump_changed:
 helmwave_dump_offline:
 	$(helmwave_build) --diff-mode=none
 helmwave_list:
-	$(helmwave_no_log) list $(helmwave_build_args) $(helmwave_yml_args) --build=false
+	$(helmwave_no_log) list $(helmwave_build_args) $(helmwave_yml_args) --skip-unchanged=false  -t $K
 helmwave_diff:
 	$(helmwave_no_log) diff live --plandir=$(helmwave_plan_new) 
 helmwave_graph:
