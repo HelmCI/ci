@@ -94,7 +94,8 @@ k3d cluster delete local-ci # 709ms
 
 ## TODO:
 
-- [ ] Add first sample modules (infra, mon).
+- [x] Add first sample modules **infra**.
+- [ ] Add second sample modules **mon**.
 - [ ] Add k3d automation.
 - [ ] Add Kubespray automation.
 - [ ] Add GitLab secrets management example.
