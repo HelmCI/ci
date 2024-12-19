@@ -1,4 +1,4 @@
-{{- define "helmwave" }}
+{{- define "helmwave" -}} 
 # bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.1
 version: 0.41.1
 {{ $src := "src" -}}
