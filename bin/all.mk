@@ -20,5 +20,9 @@ all_up_context: all_dump_context
 	@echo -e "All clusters will be $(RED)upgraded$(NORMAL)! Press enter to continue ..."; read
 	@$(foreach i, $(ALL), K=$i helmwave up -t $i --skip-unchanged --yml --build ;)
 
+all_up: var-need-HELMWAVE_TAGS all_dump 
+	@echo -e "All clusters will be $(RED)upgraded$(NORMAL) with tags: $(HELMWAVE_TAGS)! Press enter to continue ..."; read
+	@$(foreach i, $(ALL), K=$i helmwave up --skip-unchanged --yml --build --dependencies=false;)
+
 all_kube_get_nodes:
 	@$(foreach i, $(ALL), echo == $i ==:; kubectl get nodes --no-headers --context $i;)
