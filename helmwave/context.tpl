@@ -66,8 +66,8 @@ _debug: # to print the merge order
         {{ end }}
       {{ end }}
     {{ end }}
-    {{ $deps = merge ($dep_file | readFile | yaml) $deps }}
-  - "DEPS:           file://./{{ $dep_file }}" # print dependency from entry point
+    {{ $deps = merge ($dep_file | tmpl.Exec "readFileExists" | yaml) $deps }}
+  - "DEPS:           file://./{{ $deps._status }}" # print dependency from entry point
   {{ end }}
   - "CONTEXT:        file://./{{ $file }} <- {{ $K }}" # print entry point
   {{ $context = merge . $deps $context }}

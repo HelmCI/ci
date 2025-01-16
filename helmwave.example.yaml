@@ -1,5 +1,5 @@
-# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.1
-version: 0.41.1
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.6
+version: 0.41.6
 # $K = k3d-local-ci - Kubernetes context
 # $R =  - Release suffix
 # $V =  - Version
@@ -24,8 +24,9 @@ version: 0.41.1
 # COMMON  STORE:  file://./src/_.yml <- exists
 # COMMON  SECRET: file://./.env.yml <- NOT exists
 # CONTEXT SECRET: file://./.env-k3d-local-ci.yml <- NOT exists
-# DEPS:           file://./src/lib/demo-store.yml
-# DEPS:           file://./src/lib/demo-nginx.yml
+# DEPS:           file://./src/lib/demo-store.yml <- exists
+# DEPS:           file://./src/lib/demo-nginx.yml <- exists
+# DEPS:           file://./src/lib/demo-optional.yml <- NOT exists
 # CONTEXT:        file://./src/k3d-local-ci.yml <- k3d-local-ci
 # NS: [demo]
 # INGRESS: http://localhost

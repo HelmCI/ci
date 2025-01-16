@@ -2,3 +2,4 @@ kind: context
 deps:
   - demo-store
   - demo-nginx
+  - demo-optional
