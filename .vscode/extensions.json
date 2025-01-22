@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "casualjim.gotemplate",
-    "irongeek.vscode-env"
+    "irongeek.vscode-env",
+    "yzhang.markdown-all-in-one"
   ]
 }
