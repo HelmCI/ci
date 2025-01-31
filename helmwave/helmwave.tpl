@@ -1,9 +1,9 @@
-{{- define "helmwave" -}} 
-# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.6
-version: 0.41.6
+{{- define "helmwave" -}}
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.8
+version: 0.41.8
 {{ $src := "src" -}}
-{{ $K := or (getenv "K") ( or (getenv "KUBECONFIG") 
-  (env.ExpandEnv "$HOME/.kube/config") | readFile | yaml | 
+{{ $K := or (getenv "K") ( or (getenv "KUBECONFIG")
+  (env.ExpandEnv "$HOME/.kube/config") | readFile | yaml |
   get "current-context") -}}  # $K = {{ $K }} - Kubernetes context
 {{ $R := getenv "R" -}}       # $R = {{ $R }} - Release suffix
 {{ $V := getenv "V" -}}       # $V = {{ $V }} - Version
@@ -11,12 +11,12 @@ version: 0.41.6
 {{- if $T }}
   {{- if not $V }}
     {{- with $T | strings.Split "/" }}
-      {{ $T = index . 0 }} # $T = {{ $T }} 
+      {{ $T = index . 0 }} # $T = {{ $T }}
       {{ $V = index . 1 }} # $V = {{ $V }}
     {{- end }}
   {{- end }}
   {{ $R = or $R (print "-" (replaceAll "." "-" $V)) }} # $R = {{ $R }} -> Release: {{$T}}{{$R}}
-{{- end }} 
+{{- end }}
 {{- $s := (dict "R" $R "V" $V "T" $T "K" $K "src" $src) }}
 
 {{ with print . "/helmwave/" }}
