@@ -34,11 +34,12 @@ releases:
       {{- $release = or $release dict }}
       {{- if or (not $T) (eq $T $name) }}
 
-        {{- $s := merge $r (dict 
-          "ns" $ns 
-          "chart" $chart 
-          "name" $name 
-          "release" (merge $release (dict 
+        {{- $s := merge $r (dict
+          "ns" $ns
+          "ns_name" $namespace.ns_name
+          "chart" $chart
+          "name" $name
+          "release" (merge $release (dict
             "manual" (or $release.manual $namespace.manual)))) }}
         {{- template "release" $s }}
 

@@ -5,16 +5,16 @@
 {{- $template := or .template .name }}
 {{- $name := print .name (or .R "") }}
   - <<: *default # RELEASE: "{{ .name }}"
-    namespace: {{ .ns }}
+    namespace: {{ or .ns_name .ns }}
     name: {{ $name }}
-    chart: 
+    chart:
       name: {{ filepath.Join ( or $chart.module "") "charts" .chart }}
       skip_dependency_update: true
     tags: [{{- if not .release.manual -}}
-              {{ .K }}, {{ .ns }} 
+              {{ .K }}, {{ .ns }}
               {{- with .template }}, {{ . }}{{- end -}}
           , {{ end -}}
-              {{ .name }}, {{ .ns }}@{{ .name }} 
+              {{ .name }}, {{ .ns }}@{{ .name }}
           {{- range .release.tags }}, {{ . }}{{ end }}]
 
 {{- with .release.dep }}
@@ -26,7 +26,7 @@
     {{- end }}
   {{- end }}
 {{- end }}
-    values:  
+    values:
 
 {{- range $chart.values }}
     {{- $v = $v | append (filepath.Join $.src "chart"             $.chart (print . ".tpl")) }}
@@ -47,7 +47,7 @@
 
 {{- $last_module := "" }}
 {{- range $_, $path := $v }}
-  {{- if file.Exists . }} 
+  {{- if file.Exists . }}
       - {{ . }} # file://./{{ . }}
   {{- else }}
     {{- $module := "" }}
@@ -58,14 +58,14 @@
       {{- end }}
     {{- end }}
     {{- if $module }}
-      {{- $last_module = $module }} 
+      {{- $last_module = $module }}
       - {{ $module }}/{{ . }} # file://./{{ $module }}/{{ . }}
     {{- else }}
-      # file://./{{ . }} 
+      # file://./{{ . }}
     {{- end }}
   {{- end }}
 {{- end }}
-{{- $__ := filepath.Join $last_module $.src "_" | dict "__" }} 
+{{- $__ := filepath.Join $last_module $.src "_" | dict "__" }}
 
 {{- $version := dict }}
 {{- with or .V .release.v }}

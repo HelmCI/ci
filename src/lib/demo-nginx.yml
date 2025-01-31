@@ -4,6 +4,7 @@ chart:
     - volume-tz-msk
 namespace:
   demo:
+    # ns_name: remap
     chart:
       app:
         nginx:
