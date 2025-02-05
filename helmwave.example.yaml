@@ -1,5 +1,5 @@
-# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.6
-version: 0.41.6
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.8
+version: 0.41.8
 # $K = k3d-local-ci - Kubernetes context
 # $R =  - Release suffix
 # $V =  - Version
@@ -55,12 +55,15 @@ releases:
   - <<: *default # RELEASE: "nginx"
     namespace: demo
     name: nginx
-    chart: 
+    chart:
       name: charts/app
       skip_dependency_update: true
     tags: [k3d-local-ci, demo, nginx, demo@nginx]
-    values: 
-      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl 
+    values:
+      - src/chart/general.tpl # file://./src/chart/general.tpl
+      # file://./src/chart/app/general.tpl
+      # file://./src/chart/volume-tz-msk.tpl
+      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl
       - src/lib/app/_api.tpl # file://./src/lib/app/_api.tpl
       # file://./src/ns/demo/app/_api.tpl
       # file://./src/context/k3d-local-ci/demo/app/_api.tpl
@@ -82,7 +85,7 @@ releases:
     values: [src/simple/infra/ingress-nginx.tpl]
     store: {v: v1.11.3}
     tags: [infra, infra@ingress-nginx, ingress-nginx]
-      
+
 
 ## Example raw releases:
 

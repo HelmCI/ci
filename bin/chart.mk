@@ -6,14 +6,15 @@ chart_map = charts.ini
 charts = $(notdir $(wildcard $(CHARTS_PATH)/*))
 chart_first_word = $(word 2,$(subst --, ,$1))
 
-define chart_pull_from_repo # (chart, repo_name, version) pull from repo 
+define chart_pull_from_repo # (chart, repo_name, version) pull from repo
 	$(info helm search: $(shell helm search hub --list-repo-url --max-col-width 70 $1 | grep '$2' | head -c 100))
 	$(info untar: $1:$3 from $2)
 	rm -rf $(CHARTS_PATH)/$1 ||:
 	helm pull $3 --untar -d $(CHARTS_PATH) $2/$1
+	cat $(CHARTS_PATH)/$1/Chart.yaml | grep version ||:
 endef
 
-define chart_pull # (chart, repo_url, version) pull from url with tmp repo 
+define chart_pull # (chart, repo_url, version) pull from url with tmp repo
 	$(info pull: $1:$3 from $2)
 	helm repo add $@ $2
 	$(call chart_pull_from_repo,$1,$@,$3)

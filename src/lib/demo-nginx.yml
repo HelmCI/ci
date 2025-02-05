@@ -1,7 +1,8 @@
 kind: lib
-chart:
+chart: # general values for all chart releases
   app:
-    - volume-tz-msk
+    - general       # file://./../chart/general.tpl
+    - volume-tz-msk # file://./../chart/app/volume-tz-msk.tpl
 namespace:
   demo:
     # ns_name: remap

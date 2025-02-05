@@ -29,6 +29,7 @@
     values:
 
 {{- range $chart.values }}
+    {{- $v = $v | append (filepath.Join $.src "chart"                     (print . ".tpl")) }}
     {{- $v = $v | append (filepath.Join $.src "chart"             $.chart (print . ".tpl")) }}
 {{- end }}
 {{- range .release.deps }}
