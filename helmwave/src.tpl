@@ -14,6 +14,7 @@
 {{- $s := dict "context" $context | merge . }}
 {{- $store    := tmpl.Exec "store"   $s | yaml }}
 # INGRESS: {{ $store.ingress.url }}
+{{template "yaml" $s }}
 .store: &store
 {{ toYaml $store | indent 2 }}
 releases:

@@ -1,5 +1,6 @@
 kind: lib
 store:
+  offline_kube_version: 1.31.5
   ingress:
     host: localhost
     sheme: http

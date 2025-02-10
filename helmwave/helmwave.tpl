@@ -27,7 +27,7 @@ version: 0.41.8
   {{- print . "store.tpl"     | readFile | tpl }}
   {{- print . "release.tpl"   | readFile | tpl }}
   {{- print . "db.tpl"        | readFile | tpl }}
-  {{- print . "yaml.tpl"      | readFile | tpl }}{{ template "yaml"   $s }}
+  {{- print . "yaml.tpl"      | readFile | tpl }}
   {{- print . "src.tpl"       | readFile | tpl }}{{ template "src"    $s }}
 
   {{- if not $T }}
