@@ -19,7 +19,7 @@ version: 0.41.8
 {{- end }}
 {{- $s := (dict "R" $R "V" $V "T" $T "K" $K "src" $src) }}
 
-{{ with print . "/helmwave/" }}
+{{- with print . "/helmwave/" }}
 
   {{- print . "readFileExists.tpl" | readFile | tpl }}
   {{- print . "fileName.tpl"  | readFile | tpl }}

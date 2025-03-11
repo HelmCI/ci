@@ -62,7 +62,7 @@ ci-all-my
 ci # core submodule with helmwave engine
   helmwave.yml.tpl # точка входа с импортом движка
   charts # helm chart дампы
-  src 
+  src
     _.yml # общий модуль для всех контекстов
     _/**/<file> # статические файлы для монтирования
     chart/<chart>/<val>.tpl # параметры для релизов чарта
@@ -85,6 +85,7 @@ helmwave.yml.tpl # точка входа с импортом движка
 ```sh
 k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 13.1s
 helmwave up # 58.5s
+curl http://localhost/api/openresty/
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
 

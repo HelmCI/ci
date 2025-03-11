@@ -63,7 +63,7 @@ ci-all-my
 ci # core submodule with helmwave engine
   helmwave.yml.tpl # entry point with engine import
   charts # helm chart vendoring
-  src 
+  src
     _.yml # common context module forced to be connected
     _/**/<file> # static files for mounts
     chart/<chart>/<val>.tpl # values for chart releases
@@ -86,6 +86,7 @@ helmwave.yml.tpl # entry point with engine import
 ```sh
 k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0" # 13.4s
 helmwave up # 48.5s
+curl http://localhost/api/openresty/
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
 

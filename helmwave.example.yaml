@@ -5,18 +5,6 @@ version: 0.41.8
 # $V =  - Version
 # $T =  - Tag (Release/Version)
 
-## YAML Anchors for reuse:
-.z:
-  - &demo # example yaml sugar
-    namespace: demo
-  - &default
-    context: k3d-local-ci
-    create_namespace: true
-    pending_release_strategy: uninstall # rollback
-    timeout: 30m # 5m
-    wait: true
-    offline_kube_version: 1.30.4
-
 ## Rich pattern "current cluster by tags":
 # MODULES SRC:   []
 # MODULES CHART: []
@@ -30,6 +18,17 @@ version: 0.41.8
 # CONTEXT:        file://./src/k3d-local-ci.yml <- k3d-local-ci
 # NS: [demo]
 # INGRESS: http://localhost
+## YAML Anchors for reuse:
+.z:
+  - &demo # example yaml sugar
+    namespace: demo
+  - &default
+    context: k3d-local-ci
+    create_namespace: true
+    pending_release_strategy: rollback # rollback
+    timeout: 30m # 5m
+    wait: true
+    offline_kube_version: 1.31.5
 .store: &store
   _: src/_
   _modules: []
@@ -41,13 +40,18 @@ version: 0.41.8
       sheme: http
       url: http://localhost
   kube: k3d-local-ci
+  offline_kube_version: 1.31.5
   oidc:
       route: auth
       srv: oidc.infra:8080
       url: http://localhost/auth
+  pending_release_strategy: rollback
   registry:
       host: docker.io
       hostProxy: docker.io
+  secrets:
+      demo:
+          my_secret: demo_secret
 
 releases:
 #  NS: demo
@@ -74,6 +78,51 @@ releases:
       <<: *store
       __: src/_
       name: nginx
+
+  - <<: *default # RELEASE: "openresty"
+    namespace: demo
+    name: openresty
+    chart:
+      name: charts/app
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo, openresty, demo@openresty]
+    values:
+      - src/chart/general.tpl # file://./src/chart/general.tpl
+      # file://./src/chart/app/general.tpl
+      # file://./src/chart/volume-tz-msk.tpl
+      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl
+      - src/lib/app/_api.tpl # file://./src/lib/app/_api.tpl
+      # file://./src/ns/demo/app/_api.tpl
+      # file://./src/context/k3d-local-ci/demo/app/_api.tpl
+      - src/lib/app/_image.tpl # file://./src/lib/app/_image.tpl
+      # file://./src/ns/demo/app/_image.tpl
+      # file://./src/context/k3d-local-ci/demo/app/_image.tpl
+      # file://./src/lib/app/openresty.tpl
+      - src/ns/demo/app/openresty.tpl # file://./src/ns/demo/app/openresty.tpl
+      # file://./src/context/k3d-local-ci/demo/app/openresty.tpl
+    store:
+      <<: *store
+      __: src/_
+      image: openresty/openresty
+      name: openresty
+      v: 1.21.4.1-0-alpine
+
+#   CHART: busybox
+  - <<: *default # RELEASE: "secrets"
+    namespace: demo
+    name: secrets
+    chart:
+      name: charts/busybox
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo, secrets, demo@secrets]
+    values:
+      - src/lib/busybox/secrets.tpl # file://./src/lib/busybox/secrets.tpl
+      # file://./src/ns/demo/busybox/secrets.tpl
+      # file://./src/context/k3d-local-ci/demo/busybox/secrets.tpl
+    store:
+      <<: *store
+      __: src/_
+      name: secrets
 
 
 ## Simple pattern "multycluster by tags":

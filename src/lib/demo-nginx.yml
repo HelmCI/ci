@@ -11,3 +11,12 @@ namespace:
         nginx:
           deps:
             - _api # http://localhost/api/nginx/
+        openresty:
+          deps:
+            - _api # http://localhost/api/openresty/
+            - _image
+          store:
+            image: openresty/openresty
+          v: 1.21.4.1-0-alpine
+      busybox:
+        secrets:

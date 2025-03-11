@@ -7,4 +7,4 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
       - id: check-symlinks
-      - id: pretty-format-json
+      # - id: pretty-format-json
