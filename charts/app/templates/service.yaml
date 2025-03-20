@@ -1,4 +1,5 @@
 {{- if not .Values.serviceDisable }}
+{{- $s := .Values.service }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,20 +7,21 @@ metadata:
   labels:
     {{- include "app.labels" . | nindent 4 }}
   annotations:
-{{- with .Values.service.annotations }}
+{{- with $s.annotations }}
 {{ toYaml . | nindent 4 }}
 {{- end }}
     {{- include "app.annotations" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ $s.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
-      {{- with .Values.service.nodePort }}
+  {{- range or $s.ports (list $s) }}
+    - port: {{ .port }}
+      targetPort: {{ or .targetPort .port }}
+      {{- with .nodePort }}
       nodePort: {{ . }}
       {{- end }}
-      protocol: TCP
-      name: main
+      protocol: {{ or .protocol "TCP" }}
+  {{- end }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}
 {{- end }}

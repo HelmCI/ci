@@ -1,4 +1,4 @@
-watchexec = watchexec -e tpl,mk,js,yml -i 'tmp/**' -i 'helmwave-*' \
+watchexec = watchexec -e tpl,mk,js,yml,yaml -i 'tmp/**' -i 'helmwave-*' \
 	--print-events --fs-events=modify
 watch_auto_yml = false
 watch_prefix =
