@@ -50,6 +50,12 @@ spec:
       {{- if .Values.hostNetwork }}
       hostNetwork: true
       {{- end }}
+      {{- if .Values.hostPID }}
+      hostPID: true
+      {{- end }}
+      {{- if .Values.hostIPC }}
+      hostIPC: true
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -128,13 +134,13 @@ spec:
               {{- toYaml $volume | nindent 14 }}
             {{- end }}
             {{- range $path, $files := .Values.files }}
-            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}
               readOnly: true
             {{ end }}
             {{- range $path, $files := .Values.file }}
             {{- range $name, $_ := $files }}
-            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}/{{ $name }}
               subPath: {{ $name }}
               readOnly: true
@@ -142,7 +148,7 @@ spec:
             {{ end }}
             {{- range $path, $files := .Values.yaml }}
             {{- range $name, $_ := $files }}
-            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}/{{ $name }}
               subPath: {{ $name }}
               readOnly: true
@@ -150,7 +156,7 @@ spec:
             {{ end }}
             {{- range $path, $files := .Values.binaryData }}
             {{- range $name, $_ := $files }}
-            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}/{{ $name }}
               subPath: {{ $name }}
               readOnly: true
@@ -161,8 +167,9 @@ spec:
               mountPath: {{ $val.to }}
             {{ end }}
             {{- range $from, $to := .Values.hostPath }}
-            - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $to "-" }}
+            - name: {{ $to | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $to }}
+              readOnly: true
             {{ end }}
       volumes:
         {{- range $name, $volume := .Values.volume }}
@@ -173,9 +180,9 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- range $path, $files := .Values.files }}
-        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+        - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           configMap:
-            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
             items:
               {{- range $name, $_ := $files }}
               - key: {{ $name }}
@@ -183,9 +190,9 @@ spec:
               {{ end }}
         {{ end }}
         {{- range $path, $files := .Values.file }}
-        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+        - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           configMap:
-            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
             items:
               {{- range $name, $_ := $files }}
               - key: {{ $name }}
@@ -194,9 +201,9 @@ spec:
               {{ end }}
         {{ end }}
         {{- range $path, $files := .Values.yaml }}
-        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+        - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           configMap:
-            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
             items:
               {{- range $name, $_ := $files }}
               - key: {{ $name }}
@@ -205,9 +212,9 @@ spec:
               {{ end }}
         {{ end }}
         {{- range $path, $files := .Values.binaryData }}
-        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+        - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           configMap:
-            name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+            name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
             items:
               {{- range $name, $_ := $files }}
               - key: {{ $name }}
@@ -220,7 +227,7 @@ spec:
             path:  {{ $val.from }}
         {{ end }}
         {{- range $from, $to := .Values.hostPath }}
-        - name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $to "-" }}
+        - name: {{ $to | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           hostPath:
             path:  {{ $from }}
         {{ end }}

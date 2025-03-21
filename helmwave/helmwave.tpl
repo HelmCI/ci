@@ -1,6 +1,6 @@
 {{- define "helmwave" -}}
-# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.8
-version: 0.41.8
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.9
+version: 0.41.9
 {{ $src := "src" -}}
 {{ $K := or (getenv "K") ( or (getenv "KUBECONFIG")
   (env.ExpandEnv "$HOME/.kube/config") | readFile | yaml |

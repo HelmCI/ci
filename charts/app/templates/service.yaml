@@ -21,6 +21,7 @@ spec:
       nodePort: {{ . }}
       {{- end }}
       protocol: {{ or .protocol "TCP" }}
+      name: {{ or .name .targetPort .port | print (or .protocol "tcp") "-"  | lower }}
   {{- end }}
   selector:
     {{- include "app.selectorLabels" . | nindent 4 }}

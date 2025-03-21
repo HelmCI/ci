@@ -1,7 +1,7 @@
 {{- $s := .Release.Store }}
 {{- $route := or $s.route (print "/api/" $s.name "/(.*)") }}
 replicaCount: {{ or $s.replicas 1 }}
-nameOverride: &name {{ $s.name }}
+nameOverride: {{ $s.name }}
 ingresses:
   _:
     hosts:

@@ -84,3 +84,14 @@ TODO: make configmap name by file path
 {{- define "app.ConfigMapName" -}}
 {{ include "app.fullname" $ }}{{- regexReplaceAll "\\W+" . "-" -}}
 {{- end }}
+
+{{- define "normalize.name" -}}
+{{- $name := regexReplaceAll "\\W+" . "-" | lower }}
+{{- if gt (len $name) 63 }}
+  {{- $hash := $name | sha256sum | trunc 8 }}
+  {{- $trimmed := $name | trunc 53 | trimSuffix "-" }}
+  {{- printf "%s--%s" $trimmed $hash }}
+{{- else }}
+  {{- $name | trimSuffix "-" }}
+{{- end }}
+{{- end }}

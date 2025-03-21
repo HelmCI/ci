@@ -1,9 +1,9 @@
 {{- $s := .Release.Store }}
-{{- $version := or $s.v (index $s.ver .Release.Name) }}
+{{- $version := or $s.v (index (or $s.ver dict) .Release.Name) }}
 nameOverride: {{ $s.name }}
-version: {{ $version }}
+version: &version {{ $version }}
 image:
-  tag: {{ $version }}
+  tag: *version
   repository: {{ $s.registry.host }}/{{ $s.image }}
 
 {{- with $s.env }}
@@ -12,7 +12,7 @@ env:
 {{- end }}
 
 {{- with $s.port }}
-service:   
+service:
   port: {{ . }}
 livenessProbe: &livenessProbe
   httpGet:
