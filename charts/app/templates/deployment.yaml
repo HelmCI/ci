@@ -64,9 +64,12 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if not .Values.serviceDisable }}
           ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+            {{- $srv := .Values.service }}
+            {{- range or $srv.ports (list $srv) }}
+            - containerPort: {{ or .targetPort .port }}
+              protocol: {{ or .protocol "TCP" }}
+              name: {{ or .name .targetPort .port | print (or .protocol "tcp") "-"  | lower }}
+            {{- end }}
           {{- end }}
           {{- if not .Values.probeDisable }}
           livenessProbe:
@@ -75,7 +78,7 @@ spec:
             {{- else }}
             httpGet:
               path: /
-              port: http
+              port: 80
             {{- end }}
           readinessProbe:
             {{- if .Values.readinessProbe }}
@@ -83,7 +86,7 @@ spec:
             {{- else }}
             httpGet:
               path: /
-              port: http
+              port: 80
             {{- end }}
           {{- end }}
           {{- with .Values.startupProbe }}
