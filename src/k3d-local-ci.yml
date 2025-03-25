@@ -3,3 +3,5 @@ deps:
   - demo-store
   - demo-nginx
   - demo-optional
+compose:
+  - demo-wp

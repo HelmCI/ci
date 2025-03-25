@@ -1,0 +1,31 @@
+services:
+  wordpress:
+    image: wordpress:6.7.2-php8.2-apache # https://hub.docker.com/_/wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress:/var/www/html
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:9.2.0-oraclelinux9 # https://hub.docker.com/_/mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+    expose:
+      - 3306
+      # - 33060
+volumes:
+  wordpress:
+  db:

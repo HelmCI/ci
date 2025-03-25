@@ -17,6 +17,7 @@
 
 - Зависимость только от одного [исполняемого файла](https://github.com/helmwave/helmwave) и, при необходимости, Makefiles.
 - Реализация примера фрактального модульного паттерна для создания персонального монорепозитория с использованием vanilla Git.
+- Поддержка docker-compose конфигураций
 
 ## Пример повторного использования модулей
 
@@ -55,6 +56,7 @@ ci-all-my
   - charts/* - [дампы](bin/chart.mk) из [make chart_add_example](charts.ini)
   - src/*.yml - точки входа для различных k8s [контекстов](src/local.yml)
     - src/lib/*.yml - модули контекстов
+    - src/dc/*/docker-compose.yml - compose модули
 - [bin - Makefiles](bin/bin.md)
   - [bin/watch](bin/watch.md)
 
@@ -88,6 +90,10 @@ helmwave up # 58.5s
 curl http://localhost/api/openresty/
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
+
+helmwave up -t demo-wp # docker-compose пример
+kubectl port-forward -n demo-wp services/wordpress 8080:80
+open http://localhost:8080
 
 k3d cluster delete local-ci # 725ms
 ```

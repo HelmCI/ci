@@ -18,6 +18,7 @@ This is a core module for managing the entire company infrastructure using neste
 - Dependency only on a single [binary file](https://github.com/helmwave/helmwave) and optionally some Makefiles.
 - Implementation of an example fractal modular pattern for creating a personal monorepo using vanilla Git.
 - Kubernetes (k8s) is all you need.
+- Support for docker-compose configurations
 
 ## Example of Module Reuse
 
@@ -56,6 +57,7 @@ ci-all-my
   - charts/* - [dumps](bin/chart.mk) from [make chart_add_example](charts.ini)
   - src/*.yml - entry points for different k8s [contexts](src/local.yml)
     - src/lib/*.yml - context modules
+    - src/dc/*/docker-compose.yml - compose modules
 - [bin - Makefiles](bin/bin.md)
   - [bin/watch](bin/watch.md)
 
@@ -89,6 +91,10 @@ helmwave up # 48.5s
 curl http://localhost/api/openresty/
 curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
+
+helmwave up -t demo-wp # docker-compose example
+kubectl port-forward -n demo-wp services/wordpress 8080:80
+open http://localhost:8080
 
 k3d cluster delete local-ci # 709ms
 ```

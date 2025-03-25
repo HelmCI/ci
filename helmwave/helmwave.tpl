@@ -26,6 +26,7 @@ version: 0.41.9
   {{- print . "context.tpl"   | readFile | tpl }}
   {{- print . "store.tpl"     | readFile | tpl }}
   {{- print . "release.tpl"   | readFile | tpl }}
+  {{- print . "compose.tpl"   | readFile | tpl }}
   {{- print . "db.tpl"        | readFile | tpl }}
   {{- print . "yaml.tpl"      | readFile | tpl }}
   {{- print . "src.tpl"       | readFile | tpl }}{{ template "src"    $s }}
