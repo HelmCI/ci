@@ -5,3 +5,5 @@ store:
   secrets: # need move to .env-k3d-local-ci.yml
     demo: # = NS
       my_secret: demo_secret
+    demo-wp:
+      MYSQL_PASSWORD: examplepass   

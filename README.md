@@ -103,6 +103,10 @@ k3d cluster delete local-ci # 709ms
 
 - [x] Add first sample module - [**infra**](https://github.com/HelmCI/ci-infra).
 - [x] Add second sample module - [**mon**](https://github.com/HelmCI/ci-mon).
+- [ ] Docker-compose: take modules from namespace
+- [ ] Docker-compose: add PVC
+- [ ] Docker-compose: add file tree
+- [ ] Docker-compose: pass external secrets in environment variables
 - [ ] Add k3d automation.
 - [ ] Add Kubespray automation.
 - [ ] Add GitLab secrets management example.

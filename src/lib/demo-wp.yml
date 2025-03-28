@@ -1,0 +1,21 @@
+namespace:
+  demo-wp:
+    chart:
+      busybox:
+        secrets:
+      app:
+        mysql:
+          store:
+            env:
+              MYSQL_USER: &MYSQL_USER exampleuser
+            secret:
+              MYSQL_PASSWORD: &MYSQL_PASSWORD MYSQL_PASSWORD
+        wordpress:
+          store:
+            env:
+              WORDPRESS_DB_USER: *MYSQL_USER
+            secret:
+              WORDPRESS_DB_PASSWORD: *MYSQL_PASSWORD
+          #   image:
+          #     repo: wordpress
+          # v: 6.7.2-php8.4-apache

@@ -7,7 +7,7 @@ services:
     environment:
       WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: exampleuser
-      WORDPRESS_DB_PASSWORD: examplepass
+      # WORDPRESS_DB_PASSWORD: examplepass
       WORDPRESS_DB_NAME: exampledb
     volumes:
       - wordpress:/var/www/html
@@ -19,7 +19,7 @@ services:
     environment:
       MYSQL_DATABASE: exampledb
       MYSQL_USER: exampleuser
-      MYSQL_PASSWORD: examplepass
+      # MYSQL_PASSWORD: examplepass
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - db:/var/lib/mysql

@@ -6,13 +6,13 @@
 {{- $T    := .T }}
 {{- $src  := .src }}
 
-{{- $context  := tmpl.Exec "context"  . | yaml }}
+{{- $context := tmpl.Exec "context"  . | yaml }}
 {{- range $context._debug }}
 # {{ . }}
 {{- end }}
 
 {{- $s := dict "context" $context | merge . }}
-{{- $store    := tmpl.Exec "store"   $s | yaml }}
+{{- $store := tmpl.Exec "store" $s | yaml }}
 # INGRESS: {{ $store.ingress.url }}
 {{template "yaml" $s }}
 .store: &store
@@ -22,12 +22,12 @@ releases:
 {{- $r := dict "charts" $context.charts "modules" $context.modules | merge $ }}
 
 {{- if not $T }}
-  {{- $s := dict "dc" $context.dc | merge $r }}
-  {{- template "compose" $s }}
-
   {{- $s := dict "db_map" $store.db_map | merge $r }}
   {{- template "db" $s }}
 {{- end }}
+
+{{- $s := dict "dc" $context.dc | merge $ }}
+{{- $context := tmpl.Exec "compose" $s | yaml | merge $context }}
 
 {{- range $ns, $namespace := $context.namespace }}
 #  NS: {{$ns}}

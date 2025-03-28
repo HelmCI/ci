@@ -21,6 +21,13 @@ env:
 {{ toYAML . | indent 2 }}
 {{- end }}
 
+{{- with $s.secret }}
+envFrom:
+  secret:
+    secrets:
+{{ toYAML . | indent 6 }}
+{{- end }}
+
 {{- with $s.ports }}
 service:
   {{/* type: NodePort */}}
