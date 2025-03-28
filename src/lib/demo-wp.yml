@@ -1,5 +1,11 @@
 namespace:
   demo-wp:
+    compose:
+    # TODO:
+      # module: demo-wp
+      # manual: true
+      # files: 
+      #   - docker-compose.yml
     chart:
       busybox:
         secrets:

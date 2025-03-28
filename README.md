@@ -18,7 +18,7 @@ This is a core module for managing the entire company infrastructure using neste
 - Dependency only on a single [binary file](https://github.com/helmwave/helmwave) and optionally some Makefiles.
 - Implementation of an example fractal modular pattern for creating a personal monorepo using vanilla Git.
 - Kubernetes (k8s) is all you need.
-- Support for docker-compose configurations
+- Support for docker-compose modules
 
 ## Example of Module Reuse
 
@@ -103,7 +103,7 @@ k3d cluster delete local-ci # 709ms
 
 - [x] Add first sample module - [**infra**](https://github.com/HelmCI/ci-infra).
 - [x] Add second sample module - [**mon**](https://github.com/HelmCI/ci-mon).
-- [ ] Docker-compose: take modules from namespace
+- [x] Docker-compose: take modules from namespace
 - [ ] Docker-compose: add PVC
 - [ ] Docker-compose: add file tree
 - [ ] Docker-compose: pass external secrets in environment variables

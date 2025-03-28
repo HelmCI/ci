@@ -17,7 +17,7 @@
 
 - Зависимость только от одного [исполняемого файла](https://github.com/helmwave/helmwave) и, при необходимости, Makefiles.
 - Реализация примера фрактального модульного паттерна для создания персонального монорепозитория с использованием vanilla Git.
-- Поддержка docker-compose конфигураций
+- Поддержка docker-compose модулей
 
 ## Пример повторного использования модулей
 
@@ -102,7 +102,7 @@ k3d cluster delete local-ci # 725ms
 
 - [x] Добавить первый пример модуля - [**infra**](https://github.com/HelmCI/ci-infra).
 - [x] Добавить второй пример модуля - [**mon**](https://github.com/HelmCI/ci-mon).
-- [ ] Docker-compose: брать модули из неймспейса 
+- [x] Docker-compose: брать модули из неймспейса 
 - [ ] Docker-compose: добавить PVC
 - [ ] Docker-compose: добавить дерево файлов
 - [ ] Docker-compose: пропускать в переменных окружения внешние секреты

@@ -98,6 +98,12 @@ _debug: # to print the merge order
   - "NS: {{ $context.namespace | keys }}" # print namespaces
 
 # make compose map {compose:{module:"ci...",path,file}}
+{{ $compose_need := coll.Slice }}
+{{ range $key, $_ := $context.namespace }}
+  {{ if coll.Has . "compose" }}
+    {{ $compose_need = $compose_need | append $key }}
+  {{ end }}
+{{ end }}
 {{ $compose := dict }}
 {{ if file.Exists $path_dc }}
   {{ $compose_modules = $compose_modules | append "" }}
@@ -107,7 +113,7 @@ _debug: # to print the merge order
   {{ range file.ReadDir $path_module }}
     {{ $path := filepath.Join $path_module . }}
     {{ $file := filepath.Join $path "docker-compose.yml" }}
-    {{ if and (coll.Has $context.compose .) (file.Exists $file) }}
+    {{ if and (coll.Has $compose_need .) (file.Exists $file) }}
       {{ $compose = dict
         "module" $module
         "path" $path
@@ -117,7 +123,7 @@ _debug: # to print the merge order
   {{ end }}
 {{ end }}
 {{ $context = $context | merge (dict "dc" $compose) }}
-  - "COMPOSE NEED:  {{ $context.compose }}"
+  - "COMPOSE NEED:  {{ $compose_need }}"
   - "COMPOSE FOUND: {{ $context.dc | keys }}"
 
 # RETURN merged context:
