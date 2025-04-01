@@ -1,6 +1,5 @@
 {{ define "compose" }}
 {{ $_projects := dict }}
-{{ with .dc }}
   {{ range $project, $dc := . }}
     {{ with $dc.file | readFile | yaml }}
       {{ $_project := dict }}
@@ -97,8 +96,7 @@
 
     {{ end }}
   {{ end }}
-{{ end }}
 
-{{ dict "namespace" $_projects | toYaml }}
+{{ $_projects | toYaml }}
 
 {{ end -}}

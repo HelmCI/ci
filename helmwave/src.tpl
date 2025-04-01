@@ -26,9 +26,6 @@ releases:
   {{- template "db" $s }}
 {{- end }}
 
-{{- $s := dict "dc" $context.dc | merge $ }}
-{{- $context := tmpl.Exec "compose" $s | yaml | merge $context }}
-
 {{- range $ns, $namespace := $context.namespace }}
 #  NS: {{$ns}}
   {{- range $chart, $_ := .chart }}

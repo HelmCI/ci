@@ -1,14 +1,14 @@
 namespace:
   # copy-wp:
-  #   compose:
   #   manual: true
+  #   compose:
+  #     module: demo-wp
   empty-wp:
     compose:
   demo-wp:
     compose:
     # TODO:
-      # module: demo-wp
-      # manual: true
+      # node: k3d-local-ci-server-0
       # files: 
       #   - docker-compose.yml
     chart:

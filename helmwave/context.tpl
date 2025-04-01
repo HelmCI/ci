@@ -97,34 +97,57 @@ _debug: # to print the merge order
 {{ $context = dict "charts" $charts | merge $context }}
   - "NS: {{ $context.namespace | keys }}" # print namespaces
 
-# make compose map {compose:{module:"ci...",path,file}}
-{{ $compose_need := coll.Slice }}
-{{ range $key, $_ := $context.namespace }}
+# make compose's map from namespaces
+{{ $dc_need := coll.Slice }}
+{{ $dc_ns := dict }}
+{{ range $ns, $_ := $context.namespace }}
   {{ if coll.Has . "compose" }}
-    {{ $compose_need = $compose_need | append $key }}
+    {{ $compose := or .compose dict 
+      | merge (dict "ns" $ns) }}
+    {{ $module := or $compose.module $ns }}
+    {{ $dc_ns = dict "module" $module
+      | merge $compose
+      | dict $ns
+      | merge $dc_ns }}
+    {{ $dc_need = $dc_need | append $module }}
   {{ end }}
 {{ end }}
-{{ $compose := dict }}
-{{ if file.Exists $path_dc }}
-  {{ $compose_modules = $compose_modules | append "" }}
-{{ end }}
-{{ range $_, $module := $compose_modules }}
-  {{ $path_module := filepath.Join . $path_dc }}
-  {{ range file.ReadDir $path_module }}
-    {{ $path := filepath.Join $path_module . }}
-    {{ $file := filepath.Join $path "docker-compose.yml" }}
-    {{ if and (coll.Has $compose_need .) (file.Exists $file) }}
-      {{ $compose = dict
-        "module" $module
-        "path" $path
-        "file" $file
-        | dict . | merge $compose }}
+{{ if $dc_need }}
+  {{ if file.Exists $path_dc }}
+    {{ $compose_modules = $compose_modules | append "" }}
+  {{ end }}
+
+  # search with compose's map {compose:{module:"ci...",path,file}}
+  {{ $dc := dict }}
+  {{ range $_, $module := $compose_modules }}
+    {{ $path_module := filepath.Join . $path_dc }}
+    {{ range file.ReadDir $path_module }}
+      {{ $path := filepath.Join $path_module . }}
+      {{ $file := filepath.Join $path "docker-compose.yml" }}
+      {{ if and (coll.Has $dc_need .) (file.Exists $file) }}
+        {{ $dc = dict
+          "path" $path
+          "file" $file
+          | dict . 
+          | merge $dc }}
+      {{ end }}
     {{ end }}
   {{ end }}
+  - "COMPOSE NEED:  {{ $dc_need   | uniq | sort }}"
+  - "COMPOSE FOUND: {{ $dc | keys | uniq | sort }}"
+  {{with $dc }}
+    {{ $dc = . | tmpl.Exec "compose" | yaml }}
+    {{ $composes := dict }}
+    {{ range $dc_ns }}
+      {{ if coll.Has $dc .module }}
+        {{ $composes = index $dc .module
+          | dict .ns 
+          | merge $composes }}
+      {{ end }}
+    {{ end }}
+    {{ $context = $composes | dict "namespace" | merge $context }}
+  {{ end }}
 {{ end }}
-{{ $context = $context | merge (dict "dc" $compose) }}
-  - "COMPOSE NEED:  {{ $compose_need | uniq | sort }}"
-  - "COMPOSE FOUND: {{ $context.dc | keys | uniq | sort }}"
 
 # RETURN merged context:
 {{ $context | toYaml }}
