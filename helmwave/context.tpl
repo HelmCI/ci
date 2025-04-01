@@ -123,8 +123,8 @@ _debug: # to print the merge order
   {{ end }}
 {{ end }}
 {{ $context = $context | merge (dict "dc" $compose) }}
-  - "COMPOSE NEED:  {{ $compose_need }}"
-  - "COMPOSE FOUND: {{ $context.dc | keys }}"
+  - "COMPOSE NEED:  {{ $compose_need | uniq | sort }}"
+  - "COMPOSE FOUND: {{ $context.dc | keys | uniq | sort }}"
 
 # RETURN merged context:
 {{ $context | toYaml }}

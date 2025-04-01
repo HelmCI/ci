@@ -1,13 +1,14 @@
-# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.8
-version: 0.41.8
+# bin i -f github.com/helmwave/helmwave/releases/tag/v0.41.9
+version: 0.41.9
 # $K = k3d-local-ci - Kubernetes context
 # $R =  - Release suffix
 # $V =  - Version
 # $T =  - Tag (Release/Version)
 
 ## Rich pattern "current cluster by tags":
-# MODULES SRC:   []
-# MODULES CHART: []
+# MODULES SRC:     []
+# MODULES CHART:   []
+# MODULES COMPOSE: []
 # Merge context in order:
 # COMMON  STORE:  file://./src/_.yml <- exists
 # COMMON  SECRET: file://./.env.yml <- NOT exists
@@ -15,8 +16,11 @@ version: 0.41.8
 # DEPS:           file://./src/lib/demo-store.yml <- exists
 # DEPS:           file://./src/lib/demo-nginx.yml <- exists
 # DEPS:           file://./src/lib/demo-optional.yml <- NOT exists
+# DEPS:           file://./src/lib/demo-wp.yml <- exists
 # CONTEXT:        file://./src/k3d-local-ci.yml <- k3d-local-ci
-# NS: [demo]
+# NS: [demo demo-wp empty-wp]
+# COMPOSE NEED:  [demo-wp empty-wp]
+# COMPOSE FOUND: [demo-wp]
 # INGRESS: http://localhost
 ## YAML Anchors for reuse:
 .z:
@@ -52,6 +56,8 @@ version: 0.41.8
   secrets:
       demo:
           my_secret: demo_secret
+      demo-wp:
+          MYSQL_PASSWORD: examplepass
 
 releases:
 #  NS: demo
@@ -124,6 +130,108 @@ releases:
       __: src/_
       name: secrets
 
+#  NS: demo-wp
+#   CHART: app
+  - <<: *default # RELEASE: "mysql"
+    namespace: demo-wp
+    name: mysql
+    chart:
+      name: charts/app
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo-wp, mysql, demo-wp@mysql]
+    values:
+      - src/chart/general.tpl # file://./src/chart/general.tpl
+      # file://./src/chart/app/general.tpl
+      # file://./src/chart/volume-tz-msk.tpl
+      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl
+      - src/lib/app/dc.tpl # file://./src/lib/app/dc.tpl
+      # file://./src/ns/demo-wp/app/dc.tpl
+      # file://./src/context/k3d-local-ci/demo-wp/app/dc.tpl
+      # file://./src/lib/app/mysql.tpl
+      # file://./src/ns/demo-wp/app/mysql.tpl
+      # file://./src/context/k3d-local-ci/demo-wp/app/mysql.tpl
+    store:
+      <<: *store
+      __: src/_
+      env:
+          MYSQL_DATABASE: exampledb
+          MYSQL_RANDOM_ROOT_PASSWORD: "1"
+          MYSQL_USER: exampleuser
+      image:
+          repo: mysql
+          tag: 9.2.0-oraclelinux9
+      name: dc
+      path: src/dc/demo-wp
+      ports:
+          - port: 3306
+      secret:
+          MYSQL_PASSWORD: MYSQL_PASSWORD
+      volumes:
+          db:
+              pvc: true
+              to: /var/lib/mysql
+
+  - <<: *default # RELEASE: "wordpress"
+    namespace: demo-wp
+    name: wordpress
+    chart:
+      name: charts/app
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo-wp, wordpress, demo-wp@wordpress]
+    depends_on:
+      - name: mysql
+        optional: true
+    values:
+      - src/chart/general.tpl # file://./src/chart/general.tpl
+      # file://./src/chart/app/general.tpl
+      # file://./src/chart/volume-tz-msk.tpl
+      - src/chart/app/volume-tz-msk.tpl # file://./src/chart/app/volume-tz-msk.tpl
+      - src/lib/app/dc.tpl # file://./src/lib/app/dc.tpl
+      # file://./src/ns/demo-wp/app/dc.tpl
+      # file://./src/context/k3d-local-ci/demo-wp/app/dc.tpl
+      # file://./src/lib/app/wordpress.tpl
+      # file://./src/ns/demo-wp/app/wordpress.tpl
+      # file://./src/context/k3d-local-ci/demo-wp/app/wordpress.tpl
+    store:
+      <<: *store
+      __: src/_
+      env:
+          WORDPRESS_DB_HOST: mysql
+          WORDPRESS_DB_NAME: exampledb
+          WORDPRESS_DB_USER: exampleuser
+      image:
+          repo: wordpress
+          tag: 6.7.2-php8.2-apache
+      name: dc
+      path: src/dc/demo-wp
+      ports:
+          - port: 80
+            targetPort: 80
+      secret:
+          WORDPRESS_DB_PASSWORD: MYSQL_PASSWORD
+      volumes:
+          wordpress:
+              pvc: true
+              to: /var/www/html
+
+#   CHART: busybox
+  - <<: *default # RELEASE: "secrets"
+    namespace: demo-wp
+    name: secrets
+    chart:
+      name: charts/busybox
+      skip_dependency_update: true
+    tags: [k3d-local-ci, demo-wp, secrets, demo-wp@secrets]
+    values:
+      - src/lib/busybox/secrets.tpl # file://./src/lib/busybox/secrets.tpl
+      # file://./src/ns/demo-wp/busybox/secrets.tpl
+      # file://./src/context/k3d-local-ci/demo-wp/busybox/secrets.tpl
+    store:
+      <<: *store
+      __: src/_
+      name: secrets
+
+#  NS: empty-wp
 
 ## Simple pattern "multycluster by tags":
   # NS: infra
@@ -134,7 +242,7 @@ releases:
     values: [src/simple/infra/ingress-nginx.tpl]
     store: {v: v1.11.3}
     tags: [infra, infra@ingress-nginx, ingress-nginx]
-
+      
 
 ## Example raw releases:
 
@@ -148,3 +256,4 @@ releases:
 repositories:
   - name: ingress-nginx
     url: https://kubernetes.github.io/ingress-nginx
+ 

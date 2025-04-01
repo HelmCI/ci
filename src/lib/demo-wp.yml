@@ -1,4 +1,9 @@
 namespace:
+  # copy-wp:
+  #   compose:
+  #   manual: true
+  empty-wp:
+    compose:
   demo-wp:
     compose:
     # TODO:

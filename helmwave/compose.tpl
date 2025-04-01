@@ -93,7 +93,7 @@
 
       {{ end }}
 
-      {{ $_projects =  $_project | dict "app" | dict "chart" | dict $project }}
+      {{ $_projects =  $_project | dict "app" | dict "chart" | dict $project | merge $_projects }}
 
     {{ end }}
   {{ end }}
