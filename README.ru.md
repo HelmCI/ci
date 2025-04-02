@@ -103,7 +103,7 @@ k3d cluster delete local-ci # 725ms
 - [x] Добавить первый пример модуля - [**infra**](https://github.com/HelmCI/ci-infra).
 - [x] Добавить второй пример модуля - [**mon**](https://github.com/HelmCI/ci-mon).
 - [x] Docker-compose: брать модули из неймспейса 
-- [ ] Docker-compose: возможность фиксации ноды для сервисов с монтированием диска
+- [x] Docker-compose: возможность фиксации ноды для сервисов с монтированием диска
 - [ ] Docker-compose: добавить PVC
 - [ ] Docker-compose: добавить дерево файлов
 - [ ] Docker-compose: пропускать в переменных окружения внешние секреты

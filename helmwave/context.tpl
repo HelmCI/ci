@@ -133,18 +133,19 @@ _debug: # to print the merge order
       {{ end }}
     {{ end }}
   {{ end }}
-  - "COMPOSE NEED:  {{ $dc_need   | uniq | sort }}"
-  - "COMPOSE FOUND: {{ $dc | keys | uniq | sort }}"
+  - "COMPOSE NEED:  {{ $dc_need | uniq | sort }}"
+  - "COMPOSE FOUND: {{ $dc | keys | sort }}"
   {{with $dc }}
-    {{ $dc = . | tmpl.Exec "compose" | yaml }}
     {{ $composes := dict }}
     {{ range $dc_ns }}
       {{ if coll.Has $dc .module }}
         {{ $composes = index $dc .module
+          | merge .
           | dict .ns 
           | merge $composes }}
       {{ end }}
     {{ end }}
+    {{ $composes = $composes | tmpl.Exec "compose" | yaml }}
     {{ $context = $composes | dict "namespace" | merge $context }}
   {{ end }}
 {{ end }}

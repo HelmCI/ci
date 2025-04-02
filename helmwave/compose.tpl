@@ -1,5 +1,5 @@
 {{ define "compose" }}
-{{ $_projects := dict }}
+  {{ $_projects := dict }}
   {{ range $project, $dc := . }}
     {{ with $dc.file | readFile | yaml }}
       {{ $_project := dict }}
@@ -12,6 +12,9 @@
         {{ $store := dict
           "image" $image
           "path" $dc.path }}
+        {{ with $dc.node }}
+          {{ $store = dict "node" . | merge $store }}
+        {{ end }}
         {{ with .healthcheck }}
           {{ $store = dict "healthcheck" . | merge $store }}
         {{ end }}

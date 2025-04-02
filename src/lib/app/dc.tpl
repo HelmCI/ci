@@ -76,3 +76,8 @@ securityContext:
 {{/* strategy:
   type: Recreate */}}
 {{- end }}
+
+{{- with $s.node }}
+nodeSelector: 
+  kubernetes.io/hostname: {{ . }}
+{{- end }}
