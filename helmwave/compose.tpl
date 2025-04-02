@@ -64,6 +64,9 @@ _debug_dc: # to print
           {{ end }}
           {{ $store = dict "ports" $ports | merge $store }}
         {{ end }}
+        {{ with $dc.pvc }}
+          {{ $store = dict "pvc" . | merge $store }}
+        {{ end }}
         {{ with .volumes }}
           {{ $volumes := dict }}
           {{ range . }}
@@ -96,8 +99,18 @@ _debug_dc: # to print
         {{ $_project = dict $name $rel | merge $_project }}
 
       {{ end }}
+      {{ with .volumes }} # TODO: for ReadWriteMany
+# - "PVC: {{ . | keys }}"
+        {{ $_projects = dict "volumes" .
+          | dict "manual" true "store"
+          | dict "dc-volumes" 
+          | dict "busybox" 
+          | dict "chart" | dict $ns | merge $_projects }}
+      {{ end }}
 
-      {{ $_projects =  $_project | dict "app" | dict "chart" | dict $ns | merge $_projects }}
+      {{ $_projects =  $_project 
+          | dict "app" 
+          | dict "chart" | dict $ns | merge $_projects }}
 
     {{ end }}
   {{ end }}

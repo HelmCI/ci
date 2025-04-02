@@ -105,7 +105,7 @@ k3d cluster delete local-ci # 709ms
 - [x] Add second sample module - [**mon**](https://github.com/HelmCI/ci-mon).
 - [x] Docker-compose: take modules from namespace
 - [x] Docker-compose: ability to specify a node for services with disk mounting
-- [ ] Docker-compose: add PVC
+- [x] Docker-compose: add PVC
 - [ ] Docker-compose: add file tree
 - [ ] Docker-compose: pass external secrets in environment variables
 - [ ] Add k3d automation.

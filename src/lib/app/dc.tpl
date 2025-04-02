@@ -38,12 +38,47 @@ serviceDisable: true
 {{- end }}
 
 {{- with $s.volumes }}
+  {{- $pvc := . | coll.JQ `[.[] | select(.pvc == true)] | length` }}
+  {{- if and $pvc $s.pvc }}
+pvc:
+    {{- range $k, $v := . }}
+      {{- if $v.pvc }}
+  {{ $k }}:
+    {{/* annotations:
+      helm.sh/resource-policy: keep */}}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi  
+      {{- end }}
+    {{- end }}
+volume:
+    {{- range $k, $v := . }}
+      {{- if $v.pvc }}
+  {{ $k }}:
+    persistentVolumeClaim:
+      claimName: {{ $k }}
+      {{- end }}
+    {{- end }}
+volumeMount:
+    {{- range $k, $v := . }}
+      {{- if $v.pvc }}
+  {{ $k }}:
+    mountPath: {{ $v.to }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{- if . | len | lt $pvc }}
 hostPath:
-  {{- range $k, $v := . }}
-    {{- if $v.root }}
+    {{- range $k, $v := . }}
+      {{- if $v.root }}
   {{ $k }}: {{ $v.to }}
-    {{- else if not $v.pvc }}
+      {{- else if not $v.pvc }}
   {{ requiredEnv "PWD" -}}/{{ $s.path }}/{{ $k }}: {{ $v.to }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}

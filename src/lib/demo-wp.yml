@@ -4,13 +4,14 @@ namespace:
   #   compose:
   #     module: demo-wp
   #     node: k3d-local-ci-server-0
+    # TODO:
+      # files: 
+      #   - docker-compose.yml
   empty-wp:
     compose:
   demo-wp:
     compose:
-    # TODO:
-      # files: 
-      #   - docker-compose.yml
+      # pvc: true
     chart:
       busybox:
         secrets:
