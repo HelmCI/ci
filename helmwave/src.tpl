@@ -10,6 +10,9 @@
 {{- range $context._debug }}
 # {{ . }}
 {{- end }}
+{{- range $context._debug_dc }}
+# COMPOSE:: {{ . }}
+{{- end }}
 
 {{- $s := dict "context" $context | merge . }}
 {{- $store := tmpl.Exec "store" $s | yaml }}

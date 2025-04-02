@@ -146,7 +146,7 @@ _debug: # to print the merge order
       {{ end }}
     {{ end }}
     {{ $composes = $composes | tmpl.Exec "compose" | yaml }}
-    {{ $context = $composes | dict "namespace" | merge $context }}
+    {{ $context = $composes | merge $context }}
   {{ end }}
 {{ end }}
 

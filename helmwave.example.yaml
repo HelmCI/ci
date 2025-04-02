@@ -21,6 +21,7 @@ version: 0.41.9
 # NS: [demo demo-wp empty-wp]
 # COMPOSE NEED:  [demo-wp empty-wp]
 # COMPOSE FOUND: [demo-wp]
+# COMPOSE:: file://./src/dc/demo-wp/docker-compose.yml <- demo-wp
 # INGRESS: http://localhost
 ## YAML Anchors for reuse:
 .z:
@@ -256,4 +257,3 @@ releases:
 repositories:
   - name: ingress-nginx
     url: https://kubernetes.github.io/ingress-nginx
- 

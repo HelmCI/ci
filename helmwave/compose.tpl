@@ -1,7 +1,9 @@
 {{ define "compose" }}
+_debug_dc: # to print
   {{ $_projects := dict }}
-  {{ range $project, $dc := . }}
+  {{ range $ns, $dc := . }}
     {{ with $dc.file | readFile | yaml }}
+- "file://./{{ $dc.file }} <- {{ $ns }}"
       {{ $_project := dict }}
       {{ range $name, $_ := .services }}
         {{ $a := strings.Split ":" .image }}
@@ -95,11 +97,10 @@
 
       {{ end }}
 
-      {{ $_projects =  $_project | dict "app" | dict "chart" | dict $project | merge $_projects }}
+      {{ $_projects =  $_project | dict "app" | dict "chart" | dict $ns | merge $_projects }}
 
     {{ end }}
   {{ end }}
-
-{{ $_projects | toYaml }}
+{{ $_projects | dict "namespace" | toYaml }}
 
 {{ end -}}

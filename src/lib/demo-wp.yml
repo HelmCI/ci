@@ -1,6 +1,6 @@
 namespace:
   # copy-wp:
-  #   manual: true
+  #   # manual: true
   #   compose:
   #     module: demo-wp
   #     node: k3d-local-ci-server-0
