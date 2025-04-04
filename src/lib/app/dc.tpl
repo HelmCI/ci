@@ -71,7 +71,7 @@ volumeMount:
     {{- end }}
   {{- end }}
 
-  {{- if . | len | lt $pvc }}
+  {{- if and $s.hostPath (. | len | lt $pvc) }}
 hostPath:
     {{- range $k, $v := . }}
       {{- if $v.root }}

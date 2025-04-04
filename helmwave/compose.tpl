@@ -67,6 +67,9 @@ _debug_dc: # to print
         {{ with $dc.pvc }}
           {{ $store = dict "pvc" . | merge $store }}
         {{ end }}
+        {{ with $dc.hostPath }}
+          {{ $store = dict "hostPath" . | merge $store }}
+        {{ end }}
         {{ with .volumes }}
           {{ $volumes := dict }}
           {{ range . }}

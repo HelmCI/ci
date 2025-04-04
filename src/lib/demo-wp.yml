@@ -11,6 +11,7 @@ namespace:
     compose:
   demo-wp:
     compose:
+      # hostPath: true
       # pvc: true
     chart:
       busybox:
