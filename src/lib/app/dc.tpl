@@ -71,12 +71,12 @@ volumeMount:
     {{- end }}
   {{- end }}
 
-  {{- if and $s.hostPath (. | len | lt $pvc) }}
+  {{- if . | len | lt $pvc }}
 hostPath:
     {{- range $k, $v := . }}
       {{- if $v.root }}
   {{ $k }}: {{ $v.to }}
-      {{- else if not $v.pvc }}
+      {{- else if not $v.pvc | and $s.hostPath }}
   {{ requiredEnv "PWD" -}}/{{ $s.path }}/{{ $k }}: {{ $v.to }}
       {{- end }}
     {{- end }}

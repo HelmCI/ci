@@ -83,6 +83,7 @@ _debug_dc: # to print
               {{ $vol = dict "root" true | merge $vol }}
             {{ else if strings.HasPrefix "." $from | not }}
               {{ $vol = dict "pvc" true | merge $vol }}
+              {{ $from = $from | replaceAll "_" "-" }}
             {{ end }}
             {{ $volumes = dict $from $vol | merge $volumes }}
           {{ end }}
