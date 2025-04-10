@@ -1,3 +1,4 @@
+{{- $bin := "png jpg" | strings.Split " " }}
 {{- $s := .Release.Store }}
 {{- $name := .Release.Name }}
 {{- $version := or $s.v
@@ -79,6 +80,45 @@ hostPath:
       {{- else if not $v.pvc | and $s.hostPath }}
   {{ requiredEnv "PWD" -}}/{{ $s.path }}/{{ $k }}: {{ $v.to }}
       {{- end }}
+    {{- end }}
+
+    {{- if not $s.hostPath }}
+{{/* annotations: */}}
+      {{- $d := dict }}
+      {{- range $k, $v := . }}
+        {{- if or $v.root $v.pvc | not }}
+          {{- $path := filepath.Join $s.path $k }}
+  {{/* 1-{{ $k | filepath.Clean }}: | */}}
+          {{- range file.Walk $path }}
+            {{- if file.IsDir . | not }}
+    {{/* {{ filepath.Dir . | filepath.Rel $path | filepath.Join $v.to }} {{ filepath.Base . }} */}}
+              {{- $d = $d | merge (readFile .
+                | dict (filepath.Base .) 
+                | dict (filepath.Dir . | filepath.Rel $path | filepath.Join $v.to ) 
+                | dict (filepath.Ext . | strings.TrimPrefix "." | has $bin)
+                )}}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+
+files:
+      {{- range $p, $_ := $d.false }}
+  {{ $p }}: 
+        {{- range $f, $_ := . }}
+    {{ $f }}: |
+{{ $_ | indent 6}}
+        {{- end }}
+      {{- end }}
+
+binaryData:
+      {{- range $p, $_ := $d.true }}
+  {{ $p }}: 
+        {{- range $f, $_ := . }}
+    {{ $f }}: {{ $_ | base64.Encode}}
+        {{- end }}
+      {{- end }}
+
     {{- end }}
   {{- end }}
 {{- end }}

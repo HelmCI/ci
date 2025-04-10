@@ -11,7 +11,8 @@ services:
       WORDPRESS_DB_NAME: exampledb
     volumes:
       - wordpress:/var/www/html
-      # - ./busybox:/srv/busybox
+      # - ./d1:/s1
+      # - ./d1/d2:/s2
     depends_on:
       - mysql
   mysql:

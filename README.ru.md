@@ -105,7 +105,7 @@ k3d cluster delete local-ci # 725ms
 - [x] Docker-compose: брать модули из неймспейса 
 - [x] Docker-compose: возможность фиксации ноды для сервисов с монтированием диска
 - [x] Docker-compose: добавить PVC
-- [ ] Docker-compose: добавить дерево файлов
+- [x] Docker-compose: добавить дерево файлов
 - [ ] Docker-compose: пропускать в переменных окружения внешние секреты
 - [ ] chart app: объединить files и binaryData
 - [ ] Добавить автоматизацию k3d.
