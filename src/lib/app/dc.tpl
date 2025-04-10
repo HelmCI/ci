@@ -19,7 +19,7 @@ args:
 
 {{- with $s.env }}
 env:
-{{ toYAML . | indent 2 }}
+{{ . | coll.Omit (or $s.secret dict | keys) | toYAML | indent 2 }}
 {{- end }}
 
 {{- with $s.secret }}
@@ -89,6 +89,7 @@ hostPath:
         {{- if or $v.root $v.pvc | not }}
           {{- $path := filepath.Join $s.path $k }}
   {{/* 1-{{ $k | filepath.Clean }}: | */}}
+          {{- if file.Exists $path }}
           {{- range file.Walk $path }}
             {{- if file.IsDir . | not }}
     {{/* {{ filepath.Dir . | filepath.Rel $path | filepath.Join $v.to }} {{ filepath.Base . }} */}}
@@ -98,6 +99,7 @@ hostPath:
                 | dict (filepath.Ext . | strings.TrimPrefix "." | has $bin)
                 )}}
             {{- end }}
+          {{- end }}
           {{- end }}
         {{- end }}
       {{- end }}

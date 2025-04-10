@@ -107,7 +107,7 @@ k3d cluster delete local-ci # 709ms
 - [x] Docker-compose: ability to specify a node for services with disk mounting
 - [x] Docker-compose: add PVC
 - [x] Docker-compose: add file tree
-- [ ] Docker-compose: pass external secrets in environment variables
+- [x] Docker-compose: pass external secrets in environment variables
 - [ ] Add k3d automation.
 - [ ] Add Kubespray automation.
 - [ ] Add GitLab secrets management example.
