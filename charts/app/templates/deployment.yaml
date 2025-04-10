@@ -159,7 +159,7 @@ spec:
             {{ end }}
             {{- range $path, $files := .Values.binaryData }}
             {{- range $name, $_ := $files }}
-            - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
+            - name: {{ $path | printf "%s-%s-bd" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}/{{ $name }}
               subPath: {{ $name }}
               readOnly: true
@@ -215,9 +215,10 @@ spec:
               {{ end }}
         {{ end }}
         {{- range $path, $files := .Values.binaryData }}
-        - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
+          {{- $_path := $path | printf "%s-%s-bd" (include "app.fullname" $) | include "normalize.name" }}
+        - name: {{ $_path }}
           configMap:
-            name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
+            name: {{ $_path }}
             items:
               {{- range $name, $_ := $files }}
               - key: {{ $name }}

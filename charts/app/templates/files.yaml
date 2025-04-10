@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "app.fullname" $ }}{{ regexReplaceAll "\\W+" $path "-" }}
+  name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
 data:
     {{- range $name, $file := . }}
   {{ $name }}: | 
