@@ -119,7 +119,7 @@ binaryData:
       {{- range $p, $_ := $d.true }}
   {{ $p }}: 
         {{- range $f, $_ := . }}
-    {{ $f }}: {{ $_ | base64.Encode}}
+    {{ $f }}: {{ $_ | base64.Encode }}
         {{- end }}
       {{- end }}
 

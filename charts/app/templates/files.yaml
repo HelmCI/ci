@@ -1,14 +1,35 @@
-{{- range $path, $_ := .Values.files }}
-  {{- with $_ }}
+{{- $v := .Values }}
+{{- $ft := or $v.files dict }}
+{{- $fb := or $v.binaryData dict }}
+{{- $files := merge (deepCopy $ft) (deepCopy $fb) }}
+
+{{- range $path, $_ := $files }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
+
+{{/* annotations: 
+  {{- $a := dict "a" 1 "b" (dict 1 1) }}
+  {{- $b := dict "b" (dict 2 2) "c" 4 }}
+  {{- $c := dict }}
+  {{- $c = merge $c $a $b }}
+  1: {{$a}} - {{$b}} - {{$c}} */}}
+
+  {{- with $path | index $ft }}
 data:
     {{- range $name, $file := . }}
   {{ $name }}: | 
 {{ $file | indent 4 }}
     {{- end }}
   {{- end }}
+
+  {{- with $path | index $fb }}
+binaryData:
+    {{- range $name, $file := . }}
+  {{ $name }}: {{ $file }}
+    {{- end }}
+  {{- end }}
+
 {{- end }}

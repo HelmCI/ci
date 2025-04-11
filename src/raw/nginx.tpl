@@ -14,3 +14,7 @@ files:
   /usr/share/nginx/html:
     index.html: |
 {{ readFile "README.md" | indent 6 }}
+
+binaryData:
+  /usr/share/nginx/html:
+    _index.html: {{ readFile "README.md" | base64.Encode }}

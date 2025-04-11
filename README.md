@@ -107,6 +107,7 @@ k3d cluster delete local-ci # 709ms
 - [x] Docker-compose: add PVC
 - [x] Docker-compose: add file tree
 - [x] Docker-compose: pass external secrets in environment variables
+- [x] chart app: merge files and binaryData
 - [ ] Add k3d automation.
 - [ ] Add Kubespray automation.
 - [ ] Add GitLab secrets management example.

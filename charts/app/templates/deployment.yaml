@@ -1,3 +1,5 @@
+{{- $v := .Values }}
+{{- $_files := or $v.binaryData dict | merge (or $v.files dict) }}
 apiVersion: apps/v1
 kind: {{ default "Deployment" .Values.kind }}
 metadata:
@@ -136,7 +138,7 @@ spec:
             - name: {{ $name }}
               {{- toYaml $volume | nindent 14 }}
             {{- end }}
-            {{- range $path, $files := .Values.files }}
+            {{- range $path, $files := $_files }}
             - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}
               readOnly: true
@@ -152,14 +154,6 @@ spec:
             {{- range $path, $files := .Values.yaml }}
             {{- range $name, $_ := $files }}
             - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
-              mountPath: {{ $path }}/{{ $name }}
-              subPath: {{ $name }}
-              readOnly: true
-            {{ end }}
-            {{ end }}
-            {{- range $path, $files := .Values.binaryData }}
-            {{- range $name, $_ := $files }}
-            - name: {{ $path | printf "%s-%s-bd" (include "app.fullname" $) | include "normalize.name" }}
               mountPath: {{ $path }}/{{ $name }}
               subPath: {{ $name }}
               readOnly: true
@@ -182,7 +176,7 @@ spec:
         {{- with .Values.volumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- range $path, $files := .Values.files }}
+        {{- range $path, $files := $_files }}
         - name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
           configMap:
             name: {{ $path | printf "%s-%s" (include "app.fullname" $) | include "normalize.name" }}
@@ -212,17 +206,6 @@ spec:
               - key: {{ $name }}
                 path: {{ $name }}
                 # mode: 0777
-              {{ end }}
-        {{ end }}
-        {{- range $path, $files := .Values.binaryData }}
-          {{- $_path := $path | printf "%s-%s-bd" (include "app.fullname" $) | include "normalize.name" }}
-        - name: {{ $_path }}
-          configMap:
-            name: {{ $_path }}
-            items:
-              {{- range $name, $_ := $files }}
-              - key: {{ $name }}
-                path: {{ $name }}
               {{ end }}
         {{ end }}
         {{- range $key, $val := .Values.hostPathName }}
