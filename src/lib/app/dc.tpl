@@ -31,7 +31,9 @@ envFrom:
 
 {{- with $s.ports }}
 service:
-  {{/* type: NodePort */}}
+  {{- if . | coll.JQ `any(.[]; has("nodePort"))` }}
+  type: NodePort
+  {{- end }}
   ports:
 {{ toYAML . | indent 4 }}
 {{- else }}

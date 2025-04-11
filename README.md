@@ -93,8 +93,7 @@ curl http://localhost/api/nginx/
 curl http://localhost/nginx-raw/
 
 helmwave up -t demo-wp # docker-compose example
-kubectl port-forward -n demo-wp services/wordpress 8080:80
-open http://localhost:8080
+open http://localhost
 
 k3d cluster delete local-ci # 709ms
 ```

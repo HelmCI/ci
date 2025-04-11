@@ -24,11 +24,20 @@ namespace:
             secret:
               MYSQL_PASSWORD: &MYSQL_PASSWORD MYSQL_PASSWORD
         wordpress:
+          dep:
+            - ingress-nginx@infra
+          deps:
+            - _api
           store:
+            route: /
             env:
               WORDPRESS_DB_USER: *MYSQL_USER
             secret:
               WORDPRESS_DB_PASSWORD: *MYSQL_PASSWORD
+            ports:
+              - port: 80
+                targetPort: 80
+                nodePort: 30000
           #   image:
           #     repo: wordpress
           # v: 6.7.2-php8.4-apache
