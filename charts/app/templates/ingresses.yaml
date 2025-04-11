@@ -1,5 +1,6 @@
-{{- $fullName := include "app.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{- $fullName := include "app.fullname" . }}
+{{- $s := .Values.service }}
+{{- $svcPort := ((or $s.ports (list $s)) | first).port }}
 
 {{- range $name, $_ := .Values.ingresses }}
 {{- if $_ }}
