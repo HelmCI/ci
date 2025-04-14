@@ -1,9 +1,7 @@
 kind: all
 store:
-  registry:
-    host: docker.io
   secrets: # need move to .env-k3d-local-ci.yml
     demo: # = NS
       my_secret: demo_secret
     demo-wp:
-      MYSQL_PASSWORD: examplepass   
+      MYSQL_PASSWORD: examplepass

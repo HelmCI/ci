@@ -1,5 +1,6 @@
 {{- $bin := "png jpg" | strings.Split " " }}
 {{- $s := .Release.Store }}
+{{- $r := $s.registry }}
 {{- $name := .Release.Name }}
 {{- $version := or $s.v
   (index (or $s.ver dict) $name)
@@ -9,7 +10,16 @@ nameOverride: {{ $name }}
 version: &version {{ $version }}
 image:
   tag: *version
-  repository: {{ $s.image.repo }}
+  {{- $image := $s.image.repo }}
+  repository: {{ $image }}
+{{- with $r.hostProxy }}
+  repository:
+    {{- $image_repo := regexp.Find `^([^/]*[.:][^/]*)` $image | default "docker" }}
+    {{- $image_key := strings.ReplaceAll "." "_" $image_repo }}
+    {{- $image_path := index $r.proxy $image_key }}
+    {{- $image = strings.ReplaceAll (print $image_repo "/") "" $image }}
+    {{ . }}/{{ $image_path }}/{{ $image }}
+{{- end }}
 
 {{- with $s.command }}
 {{/* command: */}}
@@ -54,7 +64,7 @@ pvc:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 1Gi  
+          storage: 1Gi
       {{- end }}
     {{- end }}
 volume:
@@ -96,8 +106,8 @@ hostPath:
             {{- if file.IsDir . | not }}
     {{/* {{ filepath.Dir . | filepath.Rel $path | filepath.Join $v.to }} {{ filepath.Base . }} */}}
               {{- $d = $d | merge (readFile .
-                | dict (filepath.Base .) 
-                | dict (filepath.Dir . | filepath.Rel $path | filepath.Join $v.to ) 
+                | dict (filepath.Base .)
+                | dict (filepath.Dir . | filepath.Rel $path | filepath.Join $v.to )
                 | dict (filepath.Ext . | strings.TrimPrefix "." | has $bin)
                 )}}
             {{- end }}
@@ -108,7 +118,7 @@ hostPath:
 
 files:
       {{- range $p, $_ := $d.false }}
-  {{ $p }}: 
+  {{ $p }}:
         {{- range $f, $_ := . }}
     {{ $f }}: |
 {{ $_ | indent 6}}
@@ -117,7 +127,7 @@ files:
 
 binaryData:
       {{- range $p, $_ := $d.true }}
-  {{ $p }}: 
+  {{ $p }}:
         {{- range $f, $_ := . }}
     {{ $f }}: {{ $_ | base64.Encode }}
         {{- end }}
@@ -157,6 +167,6 @@ securityContext:
 {{- end }}
 
 {{- with $s.node }}
-nodeSelector: 
+nodeSelector:
   kubernetes.io/hostname: {{ . }}
 {{- end }}
