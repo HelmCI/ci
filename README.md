@@ -5,6 +5,7 @@ Read this in other languages: [English](README.md), [Русский](README.ru.m
 This is a core module for managing the entire company infrastructure using nested system, application, and project modules. Each module includes all dependent modules via Git submodules or symlinks and can be used independently of the parent.
 
 - [Quick Start](doc/quick_start.md)
+- [Documentation](doc/doc.md)
 
 ## Motivation
 
