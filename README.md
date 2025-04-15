@@ -4,6 +4,8 @@ Read this in other languages: [English](README.md), [Русский](README.ru.m
 
 This is a core module for managing the entire company infrastructure using nested system, application, and project modules. Each module includes all dependent modules via Git submodules or symlinks and can be used independently of the parent.
 
+- [Quick Start](doc/quick_start.md)
+
 ## Motivation
 
 - Standardization of infrastructure by eliminating the need to use "Docker Compose," including on developers' machines.
@@ -53,7 +55,7 @@ ci-all-my
 - For Helmwave:
   - [helmwave.yml.tpl](helmwave.yml.tpl) - entry point with engine import
   - [helmwave*.yml](helmwave.example.yaml) - these are the results of [generating](https://docs.helmwave.app/0.41.x/cli/#yml) into [release list](https://docs.helmwave.app/0.41.x/yaml/)
-  - ci* - any sub [modules](#Modules) (*/{src|charts})
+  - ci* - any sub modules (*/{src|charts})
   - charts/* - [dumps](bin/chart.mk) from [make chart_add_example](charts.ini)
   - src/*.yml - entry points for different k8s [contexts](src/local.yml)
     - src/lib/*.yml - context modules
