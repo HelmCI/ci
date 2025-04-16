@@ -59,7 +59,7 @@ ci-all-my
   - ci* - any sub modules (*/{src|charts})
   - charts/* - [dumps](bin/chart.mk) from [make chart_add_example](charts.ini)
   - src/*.yml - entry points for different k8s [contexts](src/local.yml)
-    - src/lib/*.yml - context modules
+    - src/lib/*.yml - context dependencies
     - src/dc/*/docker-compose.yml - compose modules
 - [bin - Makefiles](bin/bin.md)
   - [bin/watch](bin/watch.md)
@@ -69,12 +69,12 @@ ci # core submodule with helmwave engine
   helmwave.yml.tpl # entry point with engine import
   charts # helm chart vendoring
   src
-    _.yml # common context module forced to be connected
+    _.yml # common context dependency forced to be connected
     _/**/<file> # static files for mounts
     chart/<chart>/<val>.tpl # values for chart releases
     lib
       <chart>/<val>.tpl # values for chart releases for all namespaces
-      <ctx>.yml # any context modules
+      <dep>.yml # any context dependencies
     ns/<ns>/<chart>/<val>.tpl # values for chart releases in a specific namespace
     ctx/<ctx>/<ns>/<chart>/<val>.tpl # values for chart releases in a specific namespace and context
     <ctx>.yml # entry points for different k8s contexts

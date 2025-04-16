@@ -58,7 +58,7 @@ ci-all-my
   - ci* - любые подмодули (*/{src|charts})
   - charts/* - [дампы](bin/chart.mk) из [make chart_add_example](charts.ini)
   - src/*.yml - точки входа для различных k8s [контекстов](src/local.yml)
-    - src/lib/*.yml - модули контекстов
+    - src/lib/*.yml - зависимости контекстов
     - src/dc/*/docker-compose.yml - compose модули
 - [bin - Makefiles](bin/bin.md)
   - [bin/watch](bin/watch.md)
@@ -68,12 +68,12 @@ ci # core submodule with helmwave engine
   helmwave.yml.tpl # точка входа с импортом движка
   charts # helm chart дампы
   src
-    _.yml # общий модуль для всех контекстов
+    _.yml # общая зависимость для всех контекстов
     _/**/<file> # статические файлы для монтирования
     chart/<chart>/<val>.tpl # параметры для релизов чарта
     lib
       <chart>/<val>.tpl # параметры для релизов чарта для всех пространств имен
-      <ctx>.yml # модули контекстов
+      <dep>.yml # зависимости контекстов
     ns/<ns>/<chart>/<val>.tpl # параметры для релизов чарта в конкретном пространстве имен
     ctx/<ctx>/<ns>/<chart>/<val>.tpl # параметры для релизов чарта в конкретном пространстве имен и контексте
     <ctx>.yml # точки входа для различных контекстов k8s
