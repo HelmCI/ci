@@ -1,5 +1,7 @@
 # Документация
 
+- [.. HOME](../README.ru.md)
+
 По-простому задача системы — генерировать [файл списка релизов](../helmwave.example.yaml). Пройдемся по его структуре. Вначале мы видим: 
 ```yml
 ## Rich pattern "current cluster by tags":
