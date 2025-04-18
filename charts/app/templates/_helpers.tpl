@@ -37,7 +37,7 @@ Common labels
 helm.sh/chart: {{ include "app.chart" . }}
 {{ include "app.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ default .Chart.AppVersion .Values.version | quote }}
+app.kubernetes.io/version: {{ default .Chart.AppVersion .Values.version | replace "@sha256:" "." | trunc 63 | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- range $key, $value := .Values.labels }}
