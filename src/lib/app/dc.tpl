@@ -1,4 +1,5 @@
-{{- $bin := "png jpg" | strings.Split " " }}
+{{- $bin := "png jpg zip" | strings.Split " " }}
+{{- $hidden := ".DS_Store" | strings.Split " " }}
 {{- $s := .Release.Store }}
 {{- $r := $s.registry }}
 {{- $name := .Release.Name }}
@@ -105,7 +106,7 @@ hostPath:
   {{/* 1-{{ $k | filepath.Clean }}: | */}}
           {{- if file.Exists $path }}
           {{- range file.Walk $path }}
-            {{- if file.IsDir . | not }}
+            {{- if and (file.IsDir . | not) (filepath.Base . | has $hidden | not) }}
     {{/* {{ filepath.Dir . | filepath.Rel $path | filepath.Join $v.to }} {{ filepath.Base . }} */}}
               {{- $d = $d | merge (readFile .
                 | dict (filepath.Base .)
