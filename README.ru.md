@@ -112,6 +112,7 @@ k3d cluster delete local-ci # 725ms
 - [x] Docker-compose: добавить PVC
 - [x] Docker-compose: добавить дерево файлов
 - [x] Docker-compose: пропускать в переменных окружения внешние секреты
+- [ ] Docker-compose: мапу маунтов from:to заменить на to:from для переопередлений
 - [ ] Docker-compose: заменять _ в именах сервисов на -
 - [x] chart app: объединить files и binaryData
 - [ ] Добавить автоматизацию k3d.
