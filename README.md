@@ -6,6 +6,7 @@ This is a core module for managing the entire company infrastructure using neste
 
 - [Quick Start](doc/quick_start.md)
 - [Documentation](doc/doc.md)
+- [DeepWiki](https://deepwiki.com/HelmCI/ci)
 
 ## Motivation
 

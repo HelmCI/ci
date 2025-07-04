@@ -6,6 +6,7 @@
 
 - [Быстрый старт](doc/quick_start.md)
 - [Документация](doc/doc.md)
+- [DeepWiki](https://deepwiki.com/HelmCI/ci)
 
 ## Мотивация
 
