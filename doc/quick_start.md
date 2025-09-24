@@ -2,7 +2,7 @@
 
 - [.. HOME](../README.ru.md)
 
-## Поднимем тестовый кластер и подключим движек
+## Поднимем тестовый кластер и подключим движок
 
 ```sh
 k3d cluster create local-ci -v "$PWD:$PWD@server:0" -p 80:80@loadbalancer --k3s-arg "--disable=traefik,local-storage,metrics-server@server:0"
@@ -13,7 +13,7 @@ curl -LO https://raw.githubusercontent.com/HelmCI/ci-infra/refs/heads/main/helmw
 cp ci/.env .
 ```
 
-## Воспользуемся патерном docker-compose
+## Воспользуемся паттерном docker-compose
 
 ```sh
 mkdir -p src/dc/wp/
